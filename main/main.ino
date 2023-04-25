@@ -1,7 +1,9 @@
+//libraries
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
 #include "time.h"
+//constants
 //WiFI setup
 const char* ssid = "TAJNA JASKINA BABCI JADZI";
 const char* passwd = "Morys123";
@@ -12,15 +14,10 @@ const int daylightsave = 3600;
 //weather setup
 const String weather_link = "http://api.openweathermap.org/data/2.5/weather?q=Krakow,pl&APPID=";
 const String api_key = "0e11ccad42e110d8beb9583b9da92a4d";
-
-struct WeatherData {
-  char temp[8];
-  char humidity[8];
-};
-
 void printTime()
 {
   struct tm timeinfo;
+  //struct manual https://cplusplus.com/reference/ctime/tm/
   if(!getLocalTime(&timeinfo))
   {
     Serial.printf("Time getting failed\n");
@@ -86,3 +83,131 @@ void loop() {
 
  delay(30000);
 }
+
+
+/*Json from weather API
+{
+  "coord": {
+    "lon": 19.9167,
+    "lat": 50.0833
+  },
+  "weather": [
+    {
+      "id": 802,
+      "main": "Clouds",
+      "description": "scattered clouds",
+      "icon": "03n"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 285.99,
+    "feels_like": 285.21,
+    "temp_min": 285.26,
+    "temp_max": 286.78,
+    "pressure": 1004,
+    "humidity": 72
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 3.6,
+    "deg": 250
+  },
+  "clouds": {
+    "all": 40
+  },
+  "dt": 1682361409,
+  "sys": {
+    "type": 2,
+    "id": 2009211,
+    "country": "PL",
+    "sunrise": 1682307007,
+    "sunset": 1682358398
+  },
+  "timezone": 7200,
+  "id": 3094802,
+  "name": "Krakow",
+  "cod": 200
+}
+JSON filter:
+{
+  "coord": false,
+  "weather": [
+    {
+      "id": false,
+      "main": true,
+      "description": false,
+      "icon": false
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": true,
+    "feels_like": false,
+    "temp_min": false,
+    "temp_max": false,
+    "pressure": true,
+    "humidity": true
+  },
+  "visibility": false,
+  "wind": false,
+  "clouds": false,
+  "dt": false,
+  "sys": false,
+  "timezone": false,
+  "id": false,
+  "name": false,
+  "cod": false
+}
+*/
+
+
+//filterd JSON parse code
+/*
+// String payload;
+
+StaticJsonDocument<112> filter;
+filter["coord"] = false;
+
+JsonObject filter_weather_0 = filter["weather"].createNestedObject();
+filter_weather_0["id"] = false;
+filter_weather_0["main"] = true;
+filter_weather_0["description"] = false;
+filter_weather_0["icon"] = false;
+filter["base"] = "stations";
+
+JsonObject filter_main = filter.createNestedObject("main");
+filter_main["temp"] = true;
+filter_main["feels_like"] = false;
+filter_main["temp_min"] = false;
+filter_main["temp_max"] = false;
+filter_main["pressure"] = true;
+filter_main["humidity"] = true;
+filter["visibility"] = false;
+filter["wind"] = false;
+filter["clouds"] = false;
+filter["dt"] = false;
+filter["sys"] = false;
+filter["timezone"] = false;
+filter["id"] = false;
+filter["name"] = false;
+filter["cod"] = false;
+
+StaticJsonDocument<192> doc;
+
+DeserializationError error = deserializeJson(doc, payload, DeserializationOption::Filter(filter));
+
+if (error) {
+  Serial.print("deserializeJson() failed: ");
+  Serial.println(error.c_str());
+  return;
+}
+
+const char* weather_0_main = doc["weather"][0]["main"]; // "Clouds"
+
+JsonObject main = doc["main"];
+float main_temp = main["temp"]; // 285.99
+int main_pressure = main["pressure"]; // 1004
+int main_humidity = main["humidity"]; // 72
+
+*/
