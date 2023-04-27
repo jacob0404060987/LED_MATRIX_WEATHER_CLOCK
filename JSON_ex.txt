@@ -1,0 +1,73 @@
+{
+  "coord": {
+    "lon": 19.9167,
+    "lat": 50.0833
+  },
+  "weather": [
+    {
+      "id": 802,
+      "main": "Clouds",
+      "description": "scattered clouds",
+      "icon": "03n"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 285.99,
+    "feels_like": 285.21,
+    "temp_min": 285.26,
+    "temp_max": 286.78,
+    "pressure": 1004,
+    "humidity": 72
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 3.6,
+    "deg": 250
+  },
+  "clouds": {
+    "all": 40
+  },
+  "dt": 1682361409,
+  "sys": {
+    "type": 2,
+    "id": 2009211,
+    "country": "PL",
+    "sunrise": 1682307007,
+    "sunset": 1682358398
+  },
+  "timezone": 7200,
+  "id": 3094802,
+  "name": "Krakow",
+  "cod": 200
+}
+JSON filter:
+{
+  "coord": false,
+  "weather": [
+    {
+      "id": false,
+      "main": true,
+      "description": false,
+      "icon": false
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": true,
+    "feels_like": false,
+    "temp_min": false,
+    "temp_max": false,
+    "pressure": true,
+    "humidity": true
+  },
+  "visibility": false,
+  "wind": false,
+  "clouds": false,
+  "dt": false,
+  "sys": false,
+  "timezone": false,
+  "id": false,
+  "name": false,
+  "cod": false
+}

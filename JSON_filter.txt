@@ -1,0 +1,29 @@
+{
+  "coord": false,
+  "weather": [
+    {
+      "id": false,
+      "main": true,
+      "description": false,
+      "icon": false
+    }
+  ],
+  "base": false,
+  "main": {
+    "temp": true,
+    "feels_like": false,
+    "temp_min": false,
+    "temp_max": false,
+    "pressure": true,
+    "humidity": true
+  },
+  "visibility": false,
+  "wind": false,
+  "clouds": false,
+  "dt": false,
+  "sys": false,
+  "timezone": false,
+  "id": false,
+  "name": false,
+  "cod": false
+}
