@@ -5,8 +5,10 @@
 #include "time.h"
 //constants
 //WiFI setup
-const char* ssid = "TAJNA JASKINA BABCI JADZI";
-const char* passwd = "Morys123";
+//const char* ssid = "TAJNA JASKINA BABCI JADZI";
+//const char* passwd = "Morys123";
+const char* ssid = "Jasminowa_6_FTTH_INTER";
+const char* passwd = "partur65";
 //const char* ssid = "hamilton krul";
 //const char* passwd = "qwerty1234";
 //time setup
@@ -17,6 +19,9 @@ const int daylightsave = 3600;
 const String weather_link = "http://api.openweathermap.org/data/2.5/weather?q=Krakow,pl&APPID=";
 const String api_key = "0e11ccad42e110d8beb9583b9da92a4d";
 float temperatura;
+int wilgotnosc,cisnienie;
+String statusPogody;
+String retJSON;
 void printTime()
 {
   struct tm timeinfo;
@@ -29,43 +34,17 @@ void printTime()
     Serial.println(&timeinfo,"%A, %B %d %Y %H:%M:%S\n");
   }
 }
+void getWeather(String JSONinput, float *temperature, int *pressure, int *humidity, String* weatherStatus)
+{
+StaticJsonDocument<1024> doc;
 
-
-
-  // Here were copy the strings we're interested in using to your struct data
-  // It's not mandatory to make a copy, you could just use the pointers
-  // Since, they are pointing inside the "content" buffer, so you need to make
-  // sure it's still in memory when you read the string
-
-  
-
-void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid,passwd);
-  while(WiFi.status()!=WL_CONNECTED)
-  {
-    delay(500);
-    Serial.printf(".");
-  }
-  if(WiFi.status()==WL_CONNECTED)
-    Serial.printf("Polaczono\n");
-  
-  configTime(gmt_strefa, daylightsave, ntpServer);
-//pobranie danych z klineta http
-    HTTPClient http;
-  http.begin(weather_link + api_key);
-  int httpCode = http.GET();
-  String payload=http.getString();
-  StaticJsonDocument<1024> doc;
-
-DeserializationError error = deserializeJson(doc, payload);
+DeserializationError error = deserializeJson(doc, JSONinput);
 
 if (error) {
   Serial.print("deserializeJson() failed: ");
   Serial.println(error.c_str());
   return;
 }
-
 float coord_lon = doc["coord"]["lon"]; // 19.9167
 float coord_lat = doc["coord"]["lat"]; // 50.0833
 
@@ -78,7 +57,7 @@ const char* weather_0_icon = weather_0["icon"]; // "03n"
 const char* base = doc["base"]; // "stations"
 
 JsonObject main = doc["main"];
-temperatura = main["temp"]; // 285.99
+float main_temp = main["temp"]; // 285.99
 float main_feels_like = main["feels_like"]; // 285.21
 float main_temp_min = main["temp_min"]; // 285.26
 float main_temp_max = main["temp_max"]; // 286.78
@@ -105,16 +84,64 @@ int timezone = doc["timezone"]; // 7200
 long id = doc["id"]; // 3094802
 const char* name = doc["name"]; // "Krakow"
 int cod = doc["cod"]; // 200
+//przypisanie wartosci do zmiennych globalnych
+*temperature=main_temp;
+*pressure=main_pressure;
+*humidity=main_humidity;
+*weatherStatus=(String)weather_0_main;
+}
 
+
+  // Here were copy the strings we're interested in using to your struct data
+  // It's not mandatory to make a copy, you could just use the pointers
+  // Since, they are pointing inside the "content" buffer, so you need to make
+  // sure it's still in memory when you read the string
 
   
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid,passwd);
+  while(WiFi.status()!=WL_CONNECTED)
+  {
+    delay(500);
+    Serial.printf(".");
+  }
+  if(WiFi.status()==WL_CONNECTED)
+    Serial.printf("Polaczono\n");
+  
+  configTime(gmt_strefa, daylightsave, ntpServer);
+//pobranie danych z klineta http
+    HTTPClient http;
+  http.begin(weather_link + api_key);
+  int httpCode = http.GET();
+  String payload=http.getString();
 }
-// String input;
+
 void loop()
 {
-  Serial.print("temperatura to");
-  Serial.println(temperatura);
-  delay(30000);
+ // Serial.print("temperatura to ");
+ // Serial.println(temperatura);
+
+  //pobranie danych z klineta http
+  HTTPClient http;
+  http.begin(weather_link + api_key);
+  int httpCode = http.GET();
+  String payload=http.getString();
+ 
+  getWeather(payload, &temperatura, &cisnienie, &wilgotnosc,&statusPogody);
+  printTime();
+Serial.println("Cisnienie wynosi=");
+Serial.println(cisnienie);
+Serial.println("\nTemperatura wynosi=");
+Serial.println(temperatura);
+Serial.println("\nwilgotnosc wynosi=");
+Serial.println(wilgotnosc);
+Serial.println("\nStatus pogody to:");
+Serial.println(statusPogody);
+Serial.println("\n");
+Serial.println(payload);
+delay(10000);
 }
 
 

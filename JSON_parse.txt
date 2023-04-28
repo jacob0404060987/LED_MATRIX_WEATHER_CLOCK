@@ -1,0 +1,46 @@
+// char* input;
+// size_t inputLength; (optional)
+
+StaticJsonDocument<112> filter;
+filter["coord"] = false;
+
+JsonObject filter_weather_0 = filter["weather"].createNestedObject();
+filter_weather_0["id"] = false;
+filter_weather_0["main"] = true;
+filter_weather_0["description"] = false;
+filter_weather_0["icon"] = false;
+filter["base"] = false;
+
+JsonObject filter_main = filter.createNestedObject("main");
+filter_main["temp"] = true;
+filter_main["feels_like"] = false;
+filter_main["temp_min"] = false;
+filter_main["temp_max"] = false;
+filter_main["pressure"] = true;
+filter_main["humidity"] = true;
+filter["visibility"] = false;
+filter["wind"] = false;
+filter["clouds"] = false;
+filter["dt"] = false;
+filter["sys"] = false;
+filter["timezone"] = false;
+filter["id"] = false;
+filter["name"] = false;
+filter["cod"] = false;
+
+StaticJsonDocument<192> doc;
+
+DeserializationError error = deserializeJson(doc, input, inputLength, DeserializationOption::Filter(filter));
+
+if (error) {
+  Serial.print("deserializeJson() failed: ");
+  Serial.println(error.c_str());
+  return;
+}
+
+const char* weather_0_main = doc["weather"][0]["main"]; // "Clouds"
+
+JsonObject main = doc["main"];
+float main_temp = main["temp"]; // 285.99
+int main_pressure = main["pressure"]; // 1004
+int main_humidity = main["humidity"]; // 72
