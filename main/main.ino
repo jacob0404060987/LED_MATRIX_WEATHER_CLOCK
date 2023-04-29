@@ -3,7 +3,9 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include "time.h"
+#include <stdio.h>
 //constants
+#define KELVIN 273.15
 //WiFI setup
 //const char* ssid = "TAJNA JASKINA BABCI JADZI";
 //const char* passwd = "Morys123";
@@ -18,11 +20,15 @@ const int daylightsave = 3600;
 //weather setup
 const String weather_link = "http://api.openweathermap.org/data/2.5/weather?q=Krakow,pl&APPID=";
 const String api_key = "0e11ccad42e110d8beb9583b9da92a4d";
+//zmienne globalne kontrola pogody przed konwersja
 float temperatura;
 int wilgotnosc,cisnienie;
-String statusPogody;
-String retJSON;
-void printTime()
+String statusPogody; //https://openweathermap.org/weather-conditions
+//zmienne globalne czasu przed konwersja
+int hours,minutes,seconds,month,day,year,wday;
+
+
+void getTime(int * year, int * month, int * day, int * wday, int * hours, int * minutes, int * seconds)
 {
   struct tm timeinfo;
   //struct manual https://cplusplus.com/reference/ctime/tm/
@@ -31,11 +37,23 @@ void printTime()
     Serial.printf("Time getting failed\n");
   }else
   {
-    Serial.println(&timeinfo,"%A, %B %d %Y %H:%M:%S\n");
+    //Serial.println(&timeinfo,"%A, %B %d %Y %H:%M:%S\n");
   }
+  *year=timeinfo.tm_year;
+  *month=timeinfo.tm_mon;
+  *day=timeinfo.tm_mday;
+  *wday=timeinfo.tm_wday;
+  *hours=timeinfo.tm_hour;
+  *minutes=timeinfo.tm_min;
+  *seconds=timeinfo.tm_sec;
 }
-void getWeather(String JSONinput, float *temperature, int *pressure, int *humidity, String* weatherStatus)
+//funckja pogodowa z API (gotowa pod wyswietlanie)
+void getWeather( float *temperature, int *pressure, int *humidity, String* weatherStatus)
 {
+    HTTPClient http;
+  http.begin(weather_link + api_key);
+  int httpCode = http.GET();
+  String JSONinput=http.getString();
 StaticJsonDocument<1024> doc;
 
 DeserializationError error = deserializeJson(doc, JSONinput);
@@ -96,7 +114,6 @@ int cod = doc["cod"]; // 200
   // It's not mandatory to make a copy, you could just use the pointers
   // Since, they are pointing inside the "content" buffer, so you need to make
   // sure it's still in memory when you read the string
-
   
 
 void setup() {
@@ -119,29 +136,19 @@ void setup() {
 }
 
 void loop()
-{
- // Serial.print("temperatura to ");
- // Serial.println(temperatura);
+{ 
+  getWeather(&temperatura, &cisnienie, &wilgotnosc,&statusPogody);
+  getTime(&year, &month, &day, &wday, &hours, &minutes, &seconds);
+  Serial.println("Cisnienie wynosi=");
+  Serial.println(cisnienie);
+  Serial.println("\nTemperatura wynosi=");
+  Serial.println(temperatura);
+  Serial.println("\nwilgotnosc wynosi=");
+  Serial.println(wilgotnosc);
+  Serial.println("\nStatus pogody to:");
+  Serial.println(statusPogody);
 
-  //pobranie danych z klineta http
-  HTTPClient http;
-  http.begin(weather_link + api_key);
-  int httpCode = http.GET();
-  String payload=http.getString();
- 
-  getWeather(payload, &temperatura, &cisnienie, &wilgotnosc,&statusPogody);
-  printTime();
-Serial.println("Cisnienie wynosi=");
-Serial.println(cisnienie);
-Serial.println("\nTemperatura wynosi=");
-Serial.println(temperatura);
-Serial.println("\nwilgotnosc wynosi=");
-Serial.println(wilgotnosc);
-Serial.println("\nStatus pogody to:");
-Serial.println(statusPogody);
-Serial.println("\n");
-Serial.println(payload);
-delay(10000);
+  delay(10000);
 }
 
 
