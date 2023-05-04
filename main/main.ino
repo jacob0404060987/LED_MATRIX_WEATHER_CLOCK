@@ -4,8 +4,16 @@
 #include <ArduinoJson.h>
 #include "time.h"
 #include <stdio.h>
+#include <RGBmatrixPanel.h>
 //constants
 #define KELVIN 273.15
+#define CLK 8
+#define OE 9
+#define LAT 10
+#define A A0
+#define B A1
+#define C A2
+#define D A3
 //WiFI setup
 //const char* ssid = "TAJNA JASKINA BABCI JADZI";
 //const char* passwd = "Morys123";
@@ -25,7 +33,8 @@ float temperatura;
 int wilgotnosc,cisnienie;
 String statusPogody; //https://openweathermap.org/weather-conditions
 //zmienne globalne czasu przed konwersja
-int hours,minutes,seconds,month,day,year,wday;
+int hours,minutes,seconds,month,day,year,wday; 
+//RGBmatrixPanel matrix()
 
 
 void getTime(int * year, int * month, int * day, int * wday, int * hours, int * minutes, int * seconds)
