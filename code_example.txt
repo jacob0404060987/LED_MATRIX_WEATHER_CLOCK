@@ -182,3 +182,7 @@ void updateTime()
   Date_text();
     }
 }
+
+
+https://www.youtube.com/watch?v=5IvTE6gUA08&ab_channel=GaryQuiring
+https://arduino-projects-free.blogspot.com/2020/12/esp32-matrix-p4-64x32-rgb-ntp-clock.html
