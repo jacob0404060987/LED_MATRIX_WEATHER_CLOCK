@@ -76,34 +76,32 @@ uint16_t WHITE=matrix.Color888(0xFF,0xFF,0xff);
 uint16_t YELLOW=matrix.Color888(0xEE,0xFF,0x00);
 uint16_t BLUE=matrix.Color888(0x0B,0x91,0xD9);
 uint16_t BLACK=matrix.Color888(0x00,0x00,0x00);
-
-/*
-uint16_t WHITE=matrix.Color888(0xff*0.1,0xff*0.1,0xff*0.1);
-uint16_t YELLOW=matrix.Color888(0xEE*0.1,0xFF*0.1,0x00*0.1);
-uint16_t BLUE=matrix.Color888(0x0B*0.1,0x91*0.1,0xD9*0.1);
-uint16_t BLACK=matrix.Color888(0x00*0.1,0x00*0.1,0x00*0.1);
-*/
+uint16_t GREY = matrix.Color888(0x87,0x82,0x7d);
 //funckja pogodowa z API (gotowa pod wyswietlanie)
 void dimmer()
 {
   if(hours>=22 || hours<7)
   {
-WHITE=matrix.Color888(0xFF*0.07,0xFF*0.07,0xff*0.07);
-YELLOW=WHITE;
-BLUE=matrix.Color888(0x0B*0.07,0x91*0.07,0xD9*0.07);
-BLACK=matrix.Color888(0x00*0.07,0x00*0.07,0x00*0.07);
+  WHITE=matrix.Color888(0xFF*0.07,0xFF*0.07,0xff*0.07);
+  YELLOW=matrix.Color888(0xFF*0.07,0xFF*0.07,0xff*0.07);
+  BLUE=matrix.Color888(0x0B*0.07,0x91*0.07,0xD9*0.07);
+  BLACK=matrix.Color888(0x00*0.07,0x00*0.07,0x00*0.07);
+  GREY = matrix.Color888(0x87*0.7,0x82*0.7,0x7d*0.7);
   }
   else
   {
- WHITE=matrix.Color888(0xFF,0xFF,0xff);
- YELLOW=matrix.Color888(0xEE,0xFF,0x00);
- BLUE=matrix.Color888(0x0B,0x91,0xD9);
- BLACK=matrix.Color888(0x00,0x00,0x00);
-  }
+  WHITE=matrix.Color888(0xFF,0xFF,0xff);
+  YELLOW=matrix.Color888(0xEE,0xFF,0x00);
+  BLUE=matrix.Color888(0x0B,0x91,0xD9);
+  BLACK=matrix.Color888(0x00,0x00,0x00);
+  GREY = matrix.Color888(0x87,0x82,0x7d);
 }
 
+matrix.setTextColor(WHITE);
+}
 void getWeather( float *temperature, int *pressure, int *humidity, String* weatherStatus)
 {
+    
   http.begin(weather_link + api_key);
   int httpCode = http.GET();
   String JSONinput=http.getString();
@@ -112,8 +110,8 @@ StaticJsonDocument<1024> doc;
 DeserializationError error = deserializeJson(doc, JSONinput);
 
 if (error) {
-  Serial.print("deserializeJson() failed: ");
-  Serial.println(error.c_str());
+  //Serial.print("deserializeJson() failed: ");
+  //Serial.println(error.c_str());
   return;
 }
 float coord_lon = doc["coord"]["lon"]; // 19.9167
@@ -160,11 +158,12 @@ int cod = doc["cod"]; // 200
 *pressure=main_pressure;
 *humidity=main_humidity;
 *weatherStatus=(String)weather_0_main;
+matrix.fillRect(0, 0, 64, 8, BLACK);
 }
 void printSunny()
 {
   matrix.fillRect(48, 21, 15, 11,BLACK);
-  matrix.fillCircle(56, 26, 5, matrix.Color888(17,18,0));
+  matrix.fillCircle(56, 26, 5, YELLOW);
 }
 void printClouds()
 {
@@ -233,24 +232,24 @@ void printDrizzle()
 void printRain()
 {
   matrix.fillRect(48, 21, 15, 11, BLACK);
-  matrix.fillRect(51, 24, 9, 3, matrix.Color888(0x87,0x82,0x7d));
+  matrix.fillRect(51, 24, 9, 3, GREY);
   for(int n=0; n<8;n++)
   {
-    matrix.drawPixel(52+n, 23, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(52+n, 23, GREY);
   }
   for(int n=0; n<5;n++)
   {
-    matrix.drawPixel(53+n, 22, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(53+n, 22, GREY);
   }
   for(int n=0; n<2;n++)
   {
-    matrix.drawPixel(54+n, 21, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(54+n, 21, GREY);
   }
     for(int n=0; n<2;n++)
   {
-    matrix.drawPixel(60, 24+n, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(60, 24+n, GREY);
   }
-  matrix.drawPixel(50, 25, matrix.Color888(0x87,0x82,0x7d));
+  matrix.drawPixel(50, 25, GREY);
   for(int n=0;n<4;n++)
   {
     matrix.drawPixel(52+2*n, 27, BLUE);
@@ -271,24 +270,24 @@ void printRain()
 void printThunder()
 {
   matrix.fillRect(48, 21, 15, 11, BLACK);
-  matrix.fillRect(51, 24, 9, 3, matrix.Color888(0x87,0x82,0x7d));
+  matrix.fillRect(51, 24, 9, 3, GREY);
   for(int n=0; n<8;n++)
   {
-    matrix.drawPixel(52+n, 23, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(52+n, 23, GREY);
   }
   for(int n=0; n<5;n++)
   {
-    matrix.drawPixel(53+n, 22, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(53+n, 22, GREY);
   }
   for(int n=0; n<2;n++)
   {
-    matrix.drawPixel(54+n, 21, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(54+n, 21, GREY);
   }
     for(int n=0; n<2;n++)
   {
-    matrix.drawPixel(60, 24+n, matrix.Color888(0x87,0x82,0x7d));
+    matrix.drawPixel(60, 24+n, GREY);
   }
-  matrix.drawPixel(50, 25, matrix.Color888(0x87,0x82,0x7d));
+  matrix.drawPixel(50, 25, GREY);
   for(int n=0;n<2;n++)
   {
     matrix.drawPixel(52+5*n, 26, YELLOW);
@@ -398,7 +397,7 @@ void printNine(int i, int j)
   matrix.fillRect(i,j+2,2,6,WHITE);
   matrix.fillRect(i+4,j+2,2,6,WHITE);
   matrix.fillRect(i+2,j+4,2,2,WHITE);
-  matrix.fillRect(i,j+6,2,2,matrix.Color888(0,0,0));
+  matrix.fillRect(i,j+6,2,2,BLACK);
 }
 void printDot(int i, int j)
 {
@@ -449,7 +448,10 @@ void printTime(int s, int m, int h)
   printDot(32,27);
   if(temps!=s)
   {
-    matrix.fillRect(1,21,47,10,matrix.Color888(0,0,0));
+    printWeather(statusPogody);
+printWeatherParams();
+printDate();
+    matrix.fillRect(1,21,47,10,BLACK);
     if(s<10)
     {
       printZero(35,21);
@@ -523,7 +525,6 @@ if(h<10)
 void printWeatherParams()
 {
   matrix.setCursor(8, 1);
-  matrix.setTextColor(WHITE);
   matrix.setCursor(1, 1);
   matrix.print('T');
   matrix.setCursor(4, 1);
@@ -606,6 +607,17 @@ void getStringDate()
     break;
   }
 }
+void printDate()
+{
+  getStringDate();
+  matrix.fillRect(0, 11, 64, 8, BLACK);
+  matrix.setCursor(7, 11);
+  matrix.println(Smonth);
+  matrix.setCursor(27,11);
+  matrix.println(day);
+  matrix.setCursor(41, 11);
+  matrix.println(Sweekday);
+}
   // Here were copy the strings we're interested in using to your struct data
   // It's not mandatory to make a copy, you could just use the pointers
   // Since, they are pointing inside the "content" buffer, so you need to make
@@ -617,6 +629,7 @@ void setup() {
   timerAttachInterrupt(My_timer, &onTimer, true);
    timerAlarmWrite(My_timer, 1000000, true);
    timerAlarmEnable(My_timer);
+
 //  Serial.begin(115200);
   WiFi.begin(ssid,passwd);
   while(WiFi.status()!=WL_CONNECTED)
@@ -632,61 +645,20 @@ void setup() {
   getWeather(&temperatura, &cisnienie, &wilgotnosc,&statusPogody);
   getTime(&year, &month, &day, &wday, &hours, &minutes, &seconds);
   matrix.begin();
+  dimmer();
   printWeather(statusPogody);
+  printWeatherParams();
 }
 
 void loop()
 { 
-  //getWeather(&temperatura, &cisnienie, &wilgotnosc,&statusPogody);
   getTime(&year, &month, &day, &wday, &hours, &minutes, &seconds);
-  /*Serial.println("Cisnienie wynosi=");
-  Serial.println(cisnienie);
-  Serial.println("\nTemperatura wynosi=");
-  Serial.println(temperatura);
-  Serial.println("\nwilgotnosc wynosi=");
-  Serial.println(wilgotnosc);
-  Serial.println("\nStatus pogody to:");
-  Serial.println(statusPogody);
-  
-  Serial.println("****\n");
-  Serial.println(hours);
-  Serial.println(":");
-  Serial.println(minutes);
-  Serial.println(":");
-  Serial.println(seconds);
-  Serial.println(":");
-*/
-/*matrix.setTextSize(1);     // size 1 == 8 pixels high
-  matrix.setTextWrap(false);
-matrix.setCursor(35, 0);
-matrix.print(seconds);
-matrix.setCursor(20, 0);
-matrix.print(minutes);
-matrix.setCursor(8, 0);
-matrix.print(hours);
-//matrix.setCursor(30, 15);
-//matrix.print(temperatura-KELVIN);
-printSeven(1,21);
-printEight(8,21);
-printTwo(18,21);
-printThree(25,21);
-printNine(35,21);
-printSix(42,21);
-delay(1000);
-matrix.fillScreen(matrix.Color888(0, 0, 0));
-*/
-printTime(seconds,minutes,hours);
-//printWeather(statusPogody);//trzeba to wsadzic do przerwania
-printWeatherParams();
-matrix.setCursor(3, 10);
-matrix.println(wday);
-dimmer();
-if(counter==1500)
+  printTime(seconds,minutes,hours);
+  dimmer();
+  if(counter>=600)
  {
-   printTime(seconds,minutes,hours);
-   printWeather(statusPogody);
 getWeather(&temperatura, &cisnienie, &wilgotnosc,&statusPogody);
-printWeather(statusPogody);
+
  counter=0;
  }
 
